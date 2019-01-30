@@ -1,0 +1,92 @@
+﻿@model IEnumerable<DangersListApp.Models.Zgloszenie>
+
+@{
+                /**/
+
+                ViewBag.Title = "Dangers List MVC";
+}
+@if (ViewBag.Message.Length > 0)
+{
+    <p class="bg-danger">@ViewBag.Message</p>
+}
+else
+{
+    <table class="table table-condensed">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.createDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.street)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.district)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.city)
+            </th>
+            <th>
+                Lokalizacja
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.subcategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Source)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.notificationType)
+            </th>
+            <th>
+                Status zgłoszenia
+            </th>
+
+
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @DateTimeOffset.FromUnixTimeMilliseconds(item.createDate).ToString("yyyy-MM-dd")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.street)  @Html.DisplayFor(modelItem => item.street2)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.district)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.city)
+                </td>
+                <td>
+                    <a target="_blank" href="https://www.google.pl/maps/@Html.Raw("@")@Html.DisplayFor(modelItem => item.yCoordWGS84),@Html.DisplayFor(modelItem => item.xCoordWGS84),16z">Mapa</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.subcategory)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Source)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.notificationType)
+                </td>
+                <td>
+                    @foreach (var statusItem in item.statuses)
+                    {
+                        <div>@statusItem.status - @DateTimeOffset.FromUnixTimeMilliseconds(statusItem.changeDate).ToString("yyyy-MM-dd") </div>
+                    }
+                </td>
+
+            </tr>
+        }
+
+    </table>
+}
+

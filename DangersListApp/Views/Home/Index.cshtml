@@ -1,0 +1,11 @@
+﻿@{
+    /**/
+
+    ViewBag.Title = "Home Page";
+}
+<div style="min-height:20px"> </div>
+<div>
+    @Html.ActionLink("Dangers list using MVC", "DangersMVC", "Home", new { @class = "btn btn-primary btn-lg btn-block" });
+    @Html.ActionLink("Dangers list using Ajax", "DangersAjax", "Home", new { @class = "btn btn-default btn-lg btn-block" });
+</div>
+
