@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using DangersListApp.Models;
 using System.Net;
+using System.Web.Helpers;
 
 namespace DangersListApp.Controllers
 {
@@ -16,38 +17,14 @@ namespace DangersListApp.Controllers
         {
             List<Zgloszenie> zgloszenia = new List<Zgloszenie>();
 
-            //Ustawiamy proxy
-            // First create a proxy object
 
-            var proxy = new WebProxy()
-            {
-                Address = new Uri($"http://126.179.0.206:9090"),
-                UseDefaultCredentials = false,
-
-                // *** These creds are given to the proxy server, not the web server ***
-                Credentials = new NetworkCredential(
-                    userName: "MichaMat",
-                    password: "Michalek58")
-            };
-
-        // Now create a client handler which uses that proxy
-
-        var httpClientHandler = new HttpClientHandler()
-        {
-            Proxy = proxy,
-        };
-
-            using (var client = new HttpClient(httpClientHandler))
+            using (var client = new HttpClient())
             {
                 try
                 {
                     client.Timeout = new TimeSpan(0,0,600000);
-                    client.BaseAddress = new Uri("https://api.um.warszawa.pl");
-                    var response = await client.GetAsync($"/api/action/19115store_getNotifications/?id=28dc65ad-fff5-447b-99a3-95b71b4a7d1e&apikey=7c0e8f2a-34d8-4a98-93b7-abf1941558c3");
-                    //client.BaseAddress = new Uri("http://wp.pl");
-                    //var response = await client.GetAsync("");
-                    response.EnsureSuccessStatusCode();
-
+                    client.BaseAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["warsawApibUrl"]);
+                    var response = await client.GetAsync("");
                     var stringResult = await response.Content.ReadAsStringAsync();
                     JObject jStringResult = JObject.Parse(stringResult);
                     zgloszenia = jStringResult["result"]["result"]["notifications"].Select(z => z.ToObject<Zgloszenie>()).ToList();
@@ -67,7 +44,43 @@ namespace DangersListApp.Controllers
             }
         }
 
-            public ActionResult Index()
+        public async Task<JsonResult> DangersAjaxData()
+        {
+            List<Zgloszenie> zgloszenia = new List<Zgloszenie>();
+
+
+            using (var client = new HttpClient())
+            {
+                try
+                {
+                    client.Timeout = new TimeSpan(0, 0, 600000);
+                    client.BaseAddress = new Uri(System.Configuration.ConfigurationManager.AppSettings["warsawApibUrl"]);
+                    var response = await client.GetAsync("");
+                    response.EnsureSuccessStatusCode();
+
+                    var stringResult = await response.Content.ReadAsStringAsync();
+                    JObject jStringResult = JObject.Parse(stringResult);
+                    zgloszenia = jStringResult["result"]["result"]["notifications"].Select(z => z.ToObject<Zgloszenie>()).ToList();
+
+                    ViewBag.Message = "";
+
+                }
+                catch (HttpRequestException httpRequestException)
+                {
+                    ViewBag.Message = httpRequestException.Message;
+                }
+                finally
+                {
+
+                }
+                return Json(zgloszenia,JsonRequestBehavior.AllowGet);
+            }
+        }
+        public ActionResult DangersAjax()
+        {
+            return View();
+        }
+        public ActionResult Index()
         {
             return View();
         }
