@@ -1,0 +1,109 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    //"ResourceGroupName": {
+    //  "type": "string",
+    //  "minLength": 1
+    //},
+    "ResourceName": {
+      "type": "string",
+      "minLength": 1
+
+    },
+    "serviceOwner": {
+      "type": "string",
+      "minLength": 1
+
+    },
+    "warsawApiUrl": {
+      "type": "string",
+      "minLength": 1
+
+    },
+    "webAppPlan": {
+      "type": "string",
+      "defaultValue": "F1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "metadata": {
+        "description": "Describes plan's pricing tier and capacity. Check details at https://azure.microsoft.com/en-us/pricing/details/app-service/"
+      }
+    },
+    "environmentType": {
+      "type": "string",
+      "defaultValue": "dev",
+      "allowedValues": [
+        "dev",
+        "test",
+        "prod"
+      ],
+      "metadata": {
+        "description": "Values for environment variable"
+      }
+    }
+  },
+  "variables": {
+    "webAppPortalName": "[concat(parameters('ResourceName'), '-',parameters('serviceOwner'))]",
+    "appServicePlanName": "[concat('AppServicePlan-', parameters('ResourceName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-08-01",
+      "type": "Microsoft.Web/serverfarms",
+      "kind": "app",
+      "name": "[variables('appServicePlanName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+      },
+
+      "dependsOn": [],
+      "sku": {
+        "name": "[parameters('webAppPlan')]"
+      }
+    },
+    {
+      "apiVersion": "2016-08-01",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[variables('webAppPortalName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+        "environmentVariables": [
+          {
+            "name": "environmentType",
+            "value": "[parameters('environmentType')]"
+          }
+        ],
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "WarsawApiUrl",
+              "value": "[parameters('warsawApiUrl')]"
+            }
+          ]
+        }
+
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+      ],
+      "tags": {
+        "ServiceOwner": "[parameters('serviceOwner')]"
+      }
+    }
+  ]
+}

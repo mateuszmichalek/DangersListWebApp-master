@@ -10,7 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\Documents\removeResources.ps1 = ..\Documents\removeResources.ps1
 	EndProjectSection
 EndProject
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "ARM_Template", "C:\Users\Mateusz\source\repos\AzureResourceGroup3\AzureResourceGroup3\ARM_Template.deployproj", "{8AA07818-3905-405B-B127-34C093E29A90}"
+Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "ARM_Template", "ARM_Template\ARM_Template.deployproj", "{8AA07818-3905-405B-B127-34C093E29A90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
